@@ -26,3 +26,15 @@ resources or on-line papers is fine for this assignment, but you must indicate y
 other people’s work. See the paper template provided to you to use as a starting point for
 your paper. Points may be taken off for any un-cited web references.
 
+## Hours Spent
+
+Time spent on each task/total.
+
+| Task | Time |
+|------|------|
+|task1 | 20m  |
+
+## Lessons Learned
+
+What did I learn. Is this reinforced by what we learned in class?
+

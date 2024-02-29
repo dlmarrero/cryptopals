@@ -14,16 +14,19 @@ So go ahead and make that happen. You'll need to use this code for the rest of t
 """
 
 from binascii import unhexlify
+#from base64 import b64encode
+from mybase64 import b64encode
+
 
 def solve():
+    """
+    Uses python base64 module to b64encode the input string
+    """
     input_bytes = unhexlify("49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d")
-    expected_output = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
-    print(f"result matches = {base64_decode(input_bytes) == expected_output}")
-
-
-def base64_decode(data: bytes) -> str:
-    """Rolling my own base64 decoding function to learn about the underlying implementation"""
-    return data
+    expected_output = b"SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
+    result = b64encode(input_bytes)
+    print(f"result = {result}")
+    print(f"result matches = {b64encode(input_bytes) == expected_output}")
 
 
 if __name__ == '__main__':

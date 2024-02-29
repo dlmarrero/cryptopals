@@ -38,3 +38,7 @@ Time spent on each task/total.
 
 What did I learn. Is this reinforced by what we learned in class?
 
+* Set 1
+	* Challenge 1
+		* Researched and learned about the underlying implementation of base64 to roll my own. Will use the built-in libraries going forward
+

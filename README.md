@@ -30,9 +30,14 @@ your paper. Points may be taken off for any un-cited web references.
 
 Time spent on each task/total.
 
-| Task | Time |
-|------|------|
-|task1 | 20m  |
+| Task | Time 	|
+|------|--------|
+| 1-1  | 60m  	|
+| 1-2  | 10m  	|
+| 1-3  | 40m  	|
+| 1-4  | 30m  	|
+| 1-5  | 10m  	|
+| 1-6  | 150m	|
 
 ## Lessons Learned
 
@@ -41,4 +46,6 @@ What did I learn. Is this reinforced by what we learned in class?
 * Set 1
 	* Challenge 1
 		* Researched and learned about the underlying implementation of base64 to roll my own. Will use the built-in libraries going forward
-
+	* Challenge 6
+		* Must get hamming distance over as many chunks as possible to get an
+		  accurate keysize score

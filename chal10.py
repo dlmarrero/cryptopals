@@ -26,45 +26,48 @@ def xor_16(c1: bytes, c2: bytes) -> bytes:
     assert len(c1) == 16 and len(c2) == 16
     return (int.from_bytes(c1, 'big') ^ int.from_bytes(c2, 'big')).to_bytes(16, 'big')
 
-def aes_cbc_encrypt(plaintext: bytes, key: bytes, iv: bytes) -> bytes:
-    cipher = AES.new(key, AES.MODE_ECB)
 
-    ciphertext = b''
-    prev_block = iv
+class AES_CBC:
+    def __init__(self, key: bytes, iv: bytes):
+        self.cipher = AES.new(key, AES.MODE_ECB)
+        self.iv = iv
 
-    for block in get_chunks(plaintext, 16):
-        xor_block = xor_16(block, prev_block)
-        enc_block = cipher.encrypt(xor_block)
-        ciphertext += enc_block
-        prev_block = enc_block
+    def encrypt(self, plaintext: bytes) -> bytes:
+        ciphertext = b''
+        prev_block = self.iv
 
-    return ciphertext
+        for block in get_chunks(plaintext, 16):
+            xor_block = xor_16(block, prev_block)
+            enc_block = self.cipher.encrypt(xor_block)
+            ciphertext += enc_block
+            prev_block = enc_block
+
+        return ciphertext
 
 
-def aes_cbc_decrypt(ciphertext: bytes, key: bytes, iv: bytes) -> bytes:
-    cipher = AES.new(key, AES.MODE_ECB)
+    def decrypt(self, ciphertext: bytes) -> bytes:
+        plaintext = b''
+        prev_block = self.iv
 
-    plaintext = b''
-    prev_block = iv
+        for ct_block in get_chunks(ciphertext, 16):
+            dec_block = self.cipher.decrypt(ct_block)
+            xor_block = xor_16(dec_block, prev_block)
+            plaintext += xor_block
+            prev_block = ct_block
 
-    for ct_block in get_chunks(ciphertext, 16):
-        dec_block = cipher.decrypt(ct_block)
-        xor_block = xor_16(dec_block, prev_block)
-        plaintext += xor_block
-        prev_block = ct_block
-
-    return plaintext
+        return plaintext
 
 
 if __name__ == '__main__':
     plaintext = b"YELLOW SUBMARINE" * 4
     key = b"YELLOW SUBMARINE"
     iv = b"\0" * 16
-    ciphertext = aes_cbc_encrypt(plaintext, key, iv)
-    decrypted = aes_cbc_decrypt(ciphertext, key, iv)
+    cipher = AES_CBC(key, iv)
+    ciphertext = cipher.encrypt(plaintext)
+    decrypted = cipher.decrypt(ciphertext)
     assert plaintext == decrypted
 
     with open('./files/10.txt') as f:
         challenge_ciphertext = b64decode(f.read())
     
-    print(aes_cbc_decrypt(challenge_ciphertext, key, iv).decode())
+    print(cipher.decrypt(challenge_ciphertext).decode())

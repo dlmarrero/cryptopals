@@ -47,6 +47,8 @@ few, to get accurate hamming distance scores for the keysize
 
 
 from base64 import b64decode
+from typing import List
+
 from chal4 import find_xor_key
 
 
@@ -62,7 +64,7 @@ def hamming_distance(s1: bytes, s2: bytes) -> int:
     return distance
 
 
-def get_keysizes(data: bytes, size_count: int = 1) -> list[int]:
+def get_keysizes(data: bytes, size_count: int = 1) -> List[int]:
     """
     Determines the key size statistically by hamming distance and returns the
     size_count smallest key size values
@@ -96,7 +98,7 @@ def get_keysizes(data: bytes, size_count: int = 1) -> list[int]:
     return smallest_keys
 
 
-def get_chunks(data: bytes, size: int) -> list[bytes]:
+def get_chunks(data: bytes, size: int) -> List[bytes]:
     """
     Returns the data in chunks of size bytes
     """
@@ -112,7 +114,7 @@ def get_chunks(data: bytes, size: int) -> list[bytes]:
     return chunks
 
 
-def transpose_chunks(chunks: list[bytes], size: int) -> list[bytes]:
+def transpose_chunks(chunks: List[bytes], size: int) -> List[bytes]:
     """
     Transpose the chunks into blocks of chars at each index
     i.e. [[a,b], [c,d]] -> [[a,c], [b,d]]

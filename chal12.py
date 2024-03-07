@@ -37,6 +37,7 @@ discovered the first byte of unknown-string. Repeat for the next byte.
 *** Lessons Learned 
 - Adding a single character until the block starts to repeat to find the block
   size.. so cool!
+- How to use the known plaintext to create dictionaries for blocks after the first
 """
 
 import random
@@ -91,7 +92,7 @@ class Oracle:
         else:
             raise ValueError("Failed to find matching block")
 
-    def create_dictionary(self, block_size: int, known_plaintext: bytes) -> dict:
+    def create_dictionary(self, block_size: int, current_block: int, known_plaintext: bytes) -> dict:
         """
         Given a block size, creates a dictionary of all the possible block
         outputs for a repeated input of length block_size - 1 followed by the
@@ -100,11 +101,12 @@ class Oracle:
         dictionary = {}
         for i in range(256):
             # Create lookup for the next unknown plaintext char
-            base = b'A' * (block_size - len(known_plaintext) - 1) 
+            base = b'A' * ((block_size * current_block) - len(known_plaintext) - 1) 
             base += known_plaintext
             next_char = i.to_bytes(1, 'big')
             ciphertext = self.encrypt(base + next_char)
-            dictionary[ciphertext[:block_size]] = next_char
+            block = ciphertext[block_size * (current_block - 1):block_size * current_block]
+            dictionary[block] = next_char
 
         return dictionary
 
@@ -114,16 +116,26 @@ if __name__ == '__main__':
     block_size = oracle.detect_block_size()
     assert detect_aes_ecb(oracle.encrypt(b'A' * (block_size * 3)))
 
-    # Solve one block of plaintext
+    # Decrypt the plaintext one block at a time. Each time we uncover a block,
+    # Pad it out to the next block over and repeat the process, solving a char
+    # at a time.
     known_plaintext = b''
-    while len(known_plaintext) < block_size:
-        dictionary = oracle.create_dictionary(block_size, known_plaintext)
+    current_block = 1
+    while True:
+        dictionary = oracle.create_dictionary(block_size, current_block, known_plaintext)
 
         # Solve next plaintext char
-        ciphertext = oracle.encrypt(b'A' * (block_size - len(known_plaintext) - 1))
-        block = ciphertext[:block_size]
-        known_plaintext += dictionary[block]
+        plaintext = b'A' * ((block_size * current_block) - len(known_plaintext) - 1)
+        ciphertext = oracle.encrypt(plaintext)
+        block = ciphertext[block_size * (current_block - 1):block_size * current_block]
+        next_char = dictionary[block]
+        if next_char == b'\x04':
+            # Reached pkcs7 padding. Done.
+            break
 
-    # TODO how to solve the next block?
+        known_plaintext += next_char
+        if len(known_plaintext) % block_size == 0:
+            # Reached the end of the current block
+            current_block += 1
 
     print(known_plaintext)

@@ -20,6 +20,9 @@ of the block. For instance,
 def pkcs7_pad(data: bytes, block_size: int) -> bytes:
     """
     Applies PKCS#7 padding to the data to make it an even multiple of the block size
+    NOTE: I later learned that PKCS#7 padding does not always use the byte 4 for padding.
+    I left this function as is for the sake of the challenge. For challenge 16, I created a
+    new function that adds the correct padding.
     """
     padding_required = block_size - len(data) % block_size
     return data + b"\x04" * padding_required

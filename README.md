@@ -45,6 +45,7 @@ Time spent on each task/total.
 | 2-13 | 120m |
 | 2-14 | 45m |
 | 2-15 | 10m |
+| 2-16 | 60m |
 
 ## Lessons Learned
 
